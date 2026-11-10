@@ -1,0 +1,21 @@
+name: free-tier-demo
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start demo service
+        run: |
+          python3 app.py &
+          sleep 2
+          curl -s http://127.0.0.1:8080/health
+      - name: Demo call (no Supabase write in CI)
+        run: |
+          curl -s -X POST http://127.0.0.1:8080/demo \
+            -H 'Content-Type: application/json' \
+            -d '{"prompt":"用一句话介绍你自己。"}'
